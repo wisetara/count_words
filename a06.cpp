@@ -4,8 +4,6 @@
 // Sources: http://www.cplusplus.com/reference/string/string/begin/,
 //			http://www.cplusplus.com/reference/cctype/ispunct/
 
-
-// if(isalpha(sOneTemp[i]) && isalpha(sTwoTemp[i]))
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -23,10 +21,9 @@ struct wordInfo
 };
 
 void processWords(ifstream& inFile, wordInfo list[], int& totalWords);
-void countWords(ifstream& inFile, wordInfo list[], int totalWords);
+void countWords(wordInfo list[], int totalWords);
 bool search (string words[], string searchWord);
 bool searchStruct(wordInfo list[], string searchWord, int count);
-// int search(wordInfo list[], string searchWord);
 int findIndexOfMost (wordInfo list[], int totalWords);
 int findIndexOfLeast (wordInfo list[], int totalWords);
 
@@ -54,26 +51,27 @@ int main ()
 				int index;
 
 				processWords(inFile, words, totalWords);
-				for(int index = 0; index < totalWords; index++)
-				{
-					string searchWord = words[index].word;
-					int count;
-					bool repeat = searchStruct(words, searchWord, count);
-					if(!repeat)
-					{
-						words[index].word = searchWord;
-						words[index].count = 1;
-						cout << "WORD if: " << searchWord << " COUNT: " << words[index].count << endl;
-					}
-					else
-					{
-						int newWordIndex = searchStruct(words, searchWord, count);
-						searchWord = words[newWordIndex].word;
-						words[newWordIndex].count = words[newWordIndex].count + 1;
-						cout << "WORD else: " << searchWord << " COUNT: " << words[newWordIndex].count << endl;
-					}
-					index++;
-				}
+				countWords(words, totalWords);
+				// for(int index = 0; index < totalWords; index++)
+				// {
+				// 	string searchWord = words[index].word;
+				// 	int count;
+				// 	bool repeat = searchStruct(words, searchWord, count);
+				// 	if(!repeat)
+				// 	{
+				// 		words[index].word = searchWord;
+				// 		words[index].count = 1;
+				// 		cout << "WORD if: " << searchWord << " COUNT: " << words[index].count << endl;
+				// 	}
+				// 	else
+				// 	{
+				// 		int newWordIndex = searchStruct(words, searchWord, count);
+				// 		searchWord = words[newWordIndex].word;
+				// 		words[newWordIndex].count = words[newWordIndex].count + 1;
+				// 		cout << "WORD else: " << searchWord << " COUNT: " << words[newWordIndex].count << endl;
+				// 	}
+				// 	index++;
+				// }
 
 
 				// countWords(inFile, words, totalWords);
@@ -126,7 +124,7 @@ void processWords(ifstream& inFile, wordInfo list[], int& totalWords)
 	}
 }
 
-int search (wordInfo list[], string searchWord)
+int search(wordInfo list[], string searchWord)
 {
     int index = 0;
     while (index <= ARRAY_SIZE && list[index].word != searchWord)
@@ -151,6 +149,38 @@ bool searchStruct(wordInfo list[], string searchWord, int count)
 	return found;
 }
 
+void countWords(wordInfo list[], int totalWords)
+{
+	for(int index = 0; index < totalWords; index++)
+	{
+		string searchWord = list[index].word;
+		int count;
+		bool repeat = searchStruct(list, searchWord, count);
+		if(!repeat)
+		{
+			list[index].word = searchWord;
+			list[index].count = 1;
+			cout << "WORD if: " << searchWord << " COUNT: " << list[index].count << " INDEX: " << index << endl;
+		}
+		else
+		{
+			if(repeat)
+			{
+			int newWordIndex = search(list, searchWord);
+				searchWord = list[newWordIndex].word;
+				list[newWordIndex].count = list[newWordIndex].count + 1;
+				cout << "WORD else: " << searchWord << " COUNT: " << list[newWordIndex].count << " INDEX: " << newWordIndex << endl;
+			}
+			int newWordIndex = search(list, searchWord);
+			if((list[newWordIndex].word).empty())
+			{
+				list[newWordIndex].count = 0;
+				cout << "NOPE: " << searchWord << " COUNT: " << list[newWordIndex].count << " INDEX: " << newWordIndex << endl;
+			}
+		}
+		index++;
+	}
+}
 // int findIndexOfMost(wordInfo list[], int totalWords) {
 //     int most;
 //     int index;
