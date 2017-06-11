@@ -2,7 +2,7 @@
 // Written by: Tara Scherner de la Fuente
 // Date: 5 June 2017
 // Sources: http://www.cplusplus.com/reference/string/string/begin/,
-//			http://www.cplusplus.com/reference/cctype/ispunct/
+//			http://www.cplusplus.com/reference/cctype/ispunct/, <-- I guess this was extra credit!
 
 #include <iostream>
 #include <string>
@@ -52,34 +52,10 @@ int main ()
 
 				processWords(inFile, words, totalWords);
 				countWords(words, totalWords);
-				// for(int index = 0; index < totalWords; index++)
-				// {
-				// 	string searchWord = words[index].word;
-				// 	int count;
-				// 	bool repeat = searchStruct(words, searchWord, count);
-				// 	if(!repeat)
-				// 	{
-				// 		words[index].word = searchWord;
-				// 		words[index].count = 1;
-				// 		cout << "WORD if: " << searchWord << " COUNT: " << words[index].count << endl;
-				// 	}
-				// 	else
-				// 	{
-				// 		int newWordIndex = searchStruct(words, searchWord, count);
-				// 		searchWord = words[newWordIndex].word;
-				// 		words[newWordIndex].count = words[newWordIndex].count + 1;
-				// 		cout << "WORD else: " << searchWord << " COUNT: " << words[newWordIndex].count << endl;
-				// 	}
-				// 	index++;
-				// }
-
-
-				// countWords(inFile, words, totalWords);
-
-				cout << "Total Words: " << totalWords << endl;
   			}
   			inFile.close();
-  			cout << words[50].word << endl;
+  			cout << "Uses Index to Find Most Frequent: " << findIndexOfMost(words, totalWords) << endl;
+  			cout << "Uses Index to Find (one of the) Least Frequent: " << findIndexOfLeast(words, totalWords) << endl;
   			cout << "Press q (or any other key) followed by 'Enter' to quit: ";
   			cin >> quitResponse;
 			return 0;
@@ -160,7 +136,6 @@ void countWords(wordInfo list[], int totalWords)
 		{
 			list[index].word = searchWord;
 			list[index].count = 1;
-			cout << "WORD if: " << searchWord << " COUNT: " << list[index].count << " INDEX: " << index << endl;
 		}
 		else
 		{
@@ -169,43 +144,35 @@ void countWords(wordInfo list[], int totalWords)
 			int newWordIndex = search(list, searchWord);
 				searchWord = list[newWordIndex].word;
 				list[newWordIndex].count = list[newWordIndex].count + 1;
-				cout << "WORD else: " << searchWord << " COUNT: " << list[newWordIndex].count << " INDEX: " << newWordIndex << endl;
 			}
 			int newWordIndex = search(list, searchWord);
 			if((list[newWordIndex].word).empty())
 			{
 				list[newWordIndex].count = 0;
-				cout << "NOPE: " << searchWord << " COUNT: " << list[newWordIndex].count << " INDEX: " << newWordIndex << endl;
 			}
 		}
 		index++;
 	}
 }
-// int findIndexOfMost(wordInfo list[], int totalWords) {
-//     int most;
-//     int index;
 
-//     most = list[0].count;
-//     for (index = 0; index <= totalWords; index++)
-// 	    if (list[index].count > most)
-// 	    	most = list[index].count;
-//     return index;
-// }
+int findIndexOfMost(wordInfo list[], int totalWords)
+{
+    int most = 0;
+	for(int i = 0; i < totalWords - 2; ++i)
+	{
+		if(list[most].count < list[i].count)
+			most = i;
+	}
+	return cout << "WORD: " << list[most].word << " COUNT: " << list[most].count << endl;
+}
 
-
-
-// void sort_words()
-// {
-// 	// Sort the listOfWords by frequency, using alpha order to break ties of frequency
-// }
-
-// Main function stores a listOfWords variable tp store the word/frequency info.
-// Then call the functions to do the above.
-
-// wordInfo counts[ARRAY_SIZE];
-// wordInfo words[ARRAY_SIZE];
-
-// Both of these functions are for use with parallel arrays. If you choose to use an
-// array of structs, the headers would be:
-// int findIndexOfMost (wordInfo words[], int totalWords);
-// int findIndexOfLeast (wordInfo words[], int totalWords);
+int findIndexOfLeast(wordInfo list[], int totalWords)
+{
+    int least = 0;
+	for(int i = 0; i < totalWords - 2; ++i)
+	{
+		if(list[i].count > 0 && list[least].count > list[i].count)
+			least = i;
+	}
+	return cout << "WORD: " << list[least].word << " COUNT: " << list[least].count << endl;
+}
