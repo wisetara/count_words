@@ -24,7 +24,9 @@ struct wordInfo
 
 void processWords(ifstream& inFile, wordInfo list[], int& totalWords);
 void countWords(ifstream& inFile, wordInfo list[], int totalWords);
-int search(wordInfo list[], string searchWord);
+bool search (string words[], string searchWord);
+bool searchStruct(wordInfo list[], string searchWord, int count);
+// int search(wordInfo list[], string searchWord);
 int findIndexOfMost (wordInfo list[], int totalWords);
 int findIndexOfLeast (wordInfo list[], int totalWords);
 
@@ -33,7 +35,7 @@ int main ()
 	ifstream inFile;
 	string inputTextFile;
 	string word;
-	int totalWords;
+	int totalWords = 0;
 	char reply = 'Y';
 	char quitResponse;
 
@@ -52,7 +54,29 @@ int main ()
 				int index;
 
 				processWords(inFile, words, totalWords);
-				countWords(inFile, words, totalWords);
+				for(int index = 0; index < totalWords; index++)
+				{
+					string searchWord = words[index].word;
+					int count;
+					bool repeat = searchStruct(words, searchWord, count);
+					if(!repeat)
+					{
+						words[index].word = searchWord;
+						words[index].count = 1;
+						cout << "WORD if: " << searchWord << " COUNT: " << words[index].count << endl;
+					}
+					else
+					{
+						int newWordIndex = searchStruct(words, searchWord, count);
+						searchWord = words[newWordIndex].word;
+						words[newWordIndex].count = words[newWordIndex].count + 1;
+						cout << "WORD else: " << searchWord << " COUNT: " << words[newWordIndex].count << endl;
+					}
+					index++;
+				}
+
+
+				// countWords(inFile, words, totalWords);
 
 				cout << "Total Words: " << totalWords << endl;
   			}
@@ -102,65 +126,29 @@ void processWords(ifstream& inFile, wordInfo list[], int& totalWords)
 	}
 }
 
-// int search(wordInfo list[], string searchItem, int totalWords)
-// {
-// 	int i;
-// 	bool found = false;
-
-// 	i = 0;
-
-// 	while (i <= totalWords && !found)
-// 		if (list[i].word == searchItem)
-// 			found = true;
-// 		else
-// 			i++;
-
-// 	if (found)
-// 		return i;
-// 	else
-// 		return NOT_FOUND;
-// }
-
-
-int search (wordInfo list[], string searchWord, int &count)
+int search (wordInfo list[], string searchWord)
 {
     int index = 0;
-    while (index <= count && list[index].word != searchWord)
+    while (index <= ARRAY_SIZE && list[index].word != searchWord)
         index++;
-    if (index == count)
+    if (index == ARRAY_SIZE)
         index = NOT_FOUND;
     return index;
 }
 
-void countWords(ifstream& inFile, wordInfo list[], int totalWords)
+bool searchStruct(wordInfo list[], string searchWord, int count)
 {
-	string searchWord;
+	bool found = false;
+	int index = NOT_FOUND;
 
-	inFile >> searchWord;
-
-	// int index = search(list, searchWord);
-	int count;
-
-	// while(inFile)
-	// {
-	// 	int i = search(list, searchWord, count);
-	// }
-	for(int i = 0; i < totalWords; i++)
+	while(!found && index < count)
 	{
-		// i = search(list, searchWord, count);
-		if(i >= 0)
-		{
-			list[i].count++;
-			cout << "HERE: " << list[i].word << " " << list[i].count << endl;
-		}
+		if(list[index].word == searchWord)
+			found = true;
 		else
-		{
-			list[i].word = searchWord;
-			list[i].count = 1;
-			list[i].count++;
-			cout << "THERE: " << list[i].word << " " << list[i].count << endl;
-		}
+			index++;
 	}
+	return found;
 }
 
 // int findIndexOfMost(wordInfo list[], int totalWords) {
