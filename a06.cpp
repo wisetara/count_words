@@ -1,8 +1,11 @@
 // This is the Project 6 - Term Frequency (a06.cpp)
 // Written by: Tara Scherner de la Fuente
 // Date: 5 June 2017
-// Sources: http://www.cplusplus.com/reference/string/string/begin/
+// Sources: http://www.cplusplus.com/reference/string/string/begin/,
+//			http://www.cplusplus.com/reference/cctype/ispunct/
 
+
+// if(isalpha(sOneTemp[i]) && isalpha(sTwoTemp[i]))
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -19,9 +22,9 @@ struct wordInfo
 	int count;
 };
 
-void initialize(ifstream& inFile, wordInfo list[], int& totalWords);
+void processWords(ifstream& inFile, wordInfo list[], int& totalWords);
 void countWords(ifstream& inFile, wordInfo list[], int totalWords);
-int search(wordInfo list[], string searchItem, int totalWords);
+int search(wordInfo list[], string searchWord);
 int findIndexOfMost (wordInfo list[], int totalWords);
 int findIndexOfLeast (wordInfo list[], int totalWords);
 
@@ -48,31 +51,14 @@ int main ()
 			{
 				int index;
 
-				initialize(inFile, words, totalWords);
+				processWords(inFile, words, totalWords);
 				countWords(inFile, words, totalWords);
-				// findIndexOfMost(words, totalWords, index);
-				// cout << words[index].word << " " words[index].count << endl;
 
-
-
-				// totalsByWord(wordList, totalWords);
-
-				// for (totalWords = 0; totalWords < ARRAY_SIZE; totalWords++)
-				// {
-				// 	// word = tolower(word);
-				// 	// totalWords++;
-					cout << "Total Words: " << totalWords << endl;
-				// }
-
-				// void add_word(string word);
-				// void sort_words();
-
-			// DO ALL THE AWESOME THINGS
+				cout << "Total Words: " << totalWords << endl;
   			}
   			inFile.close();
   			cout << words[50].word << endl;
   			cout << "Press q (or any other key) followed by 'Enter' to quit: ";
-  			// cout << words[3].word << endl;
   			cin >> quitResponse;
 			return 0;
 		}
@@ -90,7 +76,7 @@ int main ()
 	}
 }
 
-void initialize(ifstream& inFile, wordInfo list[], int& totalWords)
+void processWords(ifstream& inFile, wordInfo list[], int& totalWords)
 {
 	int index;
 	bool duplicate = false;
@@ -102,68 +88,93 @@ void initialize(ifstream& inFile, wordInfo list[], int& totalWords)
 		for (string::iterator i = (list[index].word).begin(); i != (list[index].word).end(); ++i)
 			*i = static_cast<char>(tolower(*i));
 
+			for (int i = 0, length = list[index].word.size(); i < length; i++)
+			{
+				if (ispunct(list[index].word[i]))
+				{
+					list[index].word.erase(i--, 1);
+					length = list[index].word.size();
+				}
+			}
+
 		for (totalWords = 0; totalWords <= ARRAY_SIZE; totalWords++)
 			list[index].count = 0;
 	}
 }
 
-int search(wordInfo list[], string searchItem, int totalWords)
+// int search(wordInfo list[], string searchItem, int totalWords)
+// {
+// 	int i;
+// 	bool found = false;
+
+// 	i = 0;
+
+// 	while (i <= totalWords && !found)
+// 		if (list[i].word == searchItem)
+// 			found = true;
+// 		else
+// 			i++;
+
+// 	if (found)
+// 		return i;
+// 	else
+// 		return NOT_FOUND;
+// }
+
+
+int search (wordInfo list[], string searchWord, int &count)
 {
-	int i;
-	bool found = false;
-
-	i = 0;
-
-	while (i <= totalWords && !found)
-		if (list[i].word == searchItem)
-			found = true;
-		else
-			i++;
-
-	if (found)
-		return i;
-	else
-		return NOT_FOUND;
+    int index = 0;
+    while (index <= count && list[index].word != searchWord)
+        index++;
+    if (index == count)
+        index = NOT_FOUND;
+    return index;
 }
 
 void countWords(ifstream& inFile, wordInfo list[], int totalWords)
 {
-	int index;
 	string searchWord;
-	int result;
 
 	inFile >> searchWord;
 
-	while(inFile)
+	// int index = search(list, searchWord);
+	int count;
+
+	// while(inFile)
+	// {
+	// 	int i = search(list, searchWord, count);
+	// }
+	for(int i = 0; i < totalWords; i++)
 	{
-		index = search(list, searchWord, totalWords);
-		list[index].count = list[index].count + 1;
+		// i = search(list, searchWord, count);
+		if(i >= 0)
+		{
+			list[i].count++;
+			cout << "HERE: " << list[i].word << " " << list[i].count << endl;
+		}
+		else
+		{
+			list[i].word = searchWord;
+			list[i].count = 1;
+			list[i].count++;
+			cout << "THERE: " << list[i].word << " " << list[i].count << endl;
+		}
 	}
-	index = findIndexOfMost(list, totalWords);
-	result = index;
-	cout << "Most: " << result << endl;
 }
 
-int findIndexOfMost(wordInfo list[], int totalWords) {
-    int most;
-    int index;
+// int findIndexOfMost(wordInfo list[], int totalWords) {
+//     int most;
+//     int index;
 
-    most = list[0].count;
-    for (index = 0; index <= totalWords; index++)
-	    if (list[index].count > most)
-	    	most = list[index].count;
-    return index;
-}
+//     most = list[0].count;
+//     for (index = 0; index <= totalWords; index++)
+// 	    if (list[index].count > most)
+// 	    	most = list[index].count;
+//     return index;
+// }
 
-int search (wordInfo list[], string searchItem)
-{
-    int index = 0;
-    while (index <= ARRAY_SIZE && list[index].word != searchItem)
-        index++;
-    if (index == ARRAY_SIZE)
-        index = NOT_FOUND;
-    return index;
-}
+
 
 // void sort_words()
 // {
